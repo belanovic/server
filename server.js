@@ -2,10 +2,18 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const Joi = require('joi');
+const morgan = require('morgan');
+const poruka = require('./middleware/poruka');
 
+console.log(process.env.NODE_ENV)
+console.log(app.get('env'))
+
+app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.text());
-
+app.use(express.urlencoded({extended: true}));
+/* app.use(express.static('public')); */
+app.use(poruka);
 
 const users = [
     {id: 1, username: 'Belanovic'},

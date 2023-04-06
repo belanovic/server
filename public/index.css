@@ -1,0 +1,15 @@
+html {
+    font-size: 40px;
+}
+
+.container {
+    font-size: 8px;
+}
+
+.inner_div {
+    width: 900px;
+    height: 400px;
+    background: red;
+    color: green;
+    font-size: 2rem;
+}
