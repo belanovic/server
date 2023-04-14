@@ -1,12 +1,20 @@
 const http = require('http');
 const express = require('express');
 const app = express();
-const Joi = require('joi');
+const user = require('./routes/user');
+const add_user = require('./routes/add_user');
+const get_all = require('./routes/get_all');
+const update_user = require('./routes/update_user');
 const morgan = require('morgan');
 const poruka = require('./middleware/poruka');
+const mongoose = require('mongoose');
 
-console.log(process.env.NODE_ENV)
-console.log(app.get('env'))
+mongoose.connect('mongodb+srv://goranbelanovic:21061986gb@cluster0.le1oivh.mongodb.net')
+    .then(() => console.log('App is connected to database'))
+    .catch((error) => console.log(error))
+
+/* console.log(process.env.NODE_ENV)
+console.log(app.get('env')) */
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -14,31 +22,12 @@ app.use(express.text());
 app.use(express.urlencoded({extended: true}));
 /* app.use(express.static('public')); */
 app.use(poruka);
+app.use('/user', user);
+app.use('/add_user', add_user);
+app.use('/get_all', get_all);
+app.use('/update_user', update_user);
 
-const users = [
-    {id: 1, username: 'Belanovic'},
-    {id: 2, username: 'Petrovic'},
-    {id: 3, username: 'Markovic'}
-]
-
-app.get('/', (req,res) => {
-    res.send('Odgovor iz expressss-a');
-})
-app.get('/api', (req,res) => { 
-    res.send('api Odgovor iz express-a');
-})
-app.get('/user/:username', (req,res) => {
-    const user_found = users.find((c) => c.username === req.params.username);
-    if(!user_found) res.status(404).send("User not found");
-    if(user_found) res.json(user_found.id);
-})
-
-const schema = Joi.object({
-    username: Joi.string().min(3).max(20).required(),
-    id: Joi.number()
-})
-
-app.post('/users', (req,res) => {
+/* app.post('/users', (req,res) => {
     const validation_result = schema.validate(req.body);
     if(validation_result.error) {
         res.status(400).send(validation_result.error.details[0].message);
@@ -51,7 +40,7 @@ app.post('/users', (req,res) => {
     }
     users.push(new_user);
     res.send(`Registrovani ste kao novi korisnik ${new_user.username} sa ID ${new_user.id}`);
-})
+}) */
 
 const PORT = process.env.PORT || 3000;
 
